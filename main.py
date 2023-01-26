@@ -5,19 +5,36 @@ import asyncio
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
-bot = commands.Bot(command_prefix="%",intents=discord.Intents.all() )
+# Gateway intents
+# give all intents 
+intents = discord.Intents.all()
+bot = commands.Bot(command_prefix="%",intents=intents)
 
 @bot.event
 async def on_message(message):
     if message.author == bot.user:
         return
     if message.channel.name == "google-form-logs":
-        ID= message.embeds[0].fields[1].value 
-        
-        await message.channel.send(f"This is new member's ID: {ID}")
+        embeds = message.embeds[0].to_dict()
+        email = embeds['description'].split('\n')[1]
+        discord_id = embeds['description'].split('\n')[4]
+                    
+        await message.channel.send(f"This is new member's ID: {discord_id}")
 
-        member = bot.get_user(ID)
-        member.add_roles("Verified")
+        guild_id = 1067776093421047818 # Server ID
+        role_id = 1067895469998624848 
+        
+        guild = bot.get_guild(guild_id)
+        print(guild)
+        role = discord.utils.get(guild.roles, id=role_id)
+        # print(role)
+        # print(discord_id)
+        # fetch the member object
+        user = await guild.fetch_member(discord_id)
+        print(user)
+        
+        await user.add_roles(role)
+        
 
 message=None
 
@@ -30,7 +47,7 @@ async def on_ready():
     
     # Create the interactive button
     button = discord.Embed(title="Get your Discord USER ID", color=0x00FF00)
-    button.add_field(name="👇|Press the blue circle", value="\u200b")
+    button.add_field(name="👇| Press the blue circle", value="\u200b")
     message = await bot.get_channel(1067776094226362459).send(embed=button)
 
     # Add the button reaction
