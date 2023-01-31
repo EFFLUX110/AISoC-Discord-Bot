@@ -63,10 +63,11 @@ async def on_raw_reaction_add(payload):
             
             id_msg= await bot.get_channel(1067776094226362459).send(f"{user.mention}Your Discord ID is ")
             id = await bot.get_channel(1067776094226362459).send(f"{user.id}")
-            await bot.get_channel(1067776094226362459).send("Copy this and paste it in the Google Form")
+            copy_msg = await bot.get_channel(1067776094226362459).send("Copy this and paste it in the Google Form")
             await message.remove_reaction(payload.emoji, user)
             await asyncio.sleep(15)
             await id_msg.delete()
             await id.delete()
+            await copy_msg.delete()
 
 bot.run(DISCORD_TOKEN)
